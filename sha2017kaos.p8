@@ -8,54 +8,12 @@ __lua__
 cls()
 music(1)
 
-t = 0
-dx = -40
-function _update()
- t += 1
- dx = min(dx + 0.1, 64)
-end
-
 function _draw()
-if (dx>63) then
+if (64>63) then
  cls()
 end
-
-srand(0)
-if (t%8)==0 then cls() end
- x={} y={}
- for i=1,3 do
-  x[i]=64+cos(i/3+t*0.002)*60
-  y[i]=64+sin(i/3+t*0.002)*60
- end
- 
- n=0
- local x0=x[1] 
- local y0=y[1]
- for i=1,512 do
-  n=flr(rnd(3))+1
-  x0=(x[n]+x0)/2
-  y0=(y[n]+y0)/2
-  local col=8+(t/40 + rnd(1))%8
-  pset(x0-16,y0,col)
-  pset(128-x0+16,y0,col)
- end
- 
- x0=0 x=1
- 
- while(x < dx) do
-  for y=0,127 do
-   col=pget(x,y)
-   if (col > 0) then
-    col = 8 + ((col-8)+x/5)%8
-   end
-   line(x0,y,x,y,col)
-   line(128-x0,y,128-x,y,col)
-   
-  end
-  x0 = x
-  x = x+4+sin(x/40)*2
- end
 end
+
 
 __gfx__
 00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
