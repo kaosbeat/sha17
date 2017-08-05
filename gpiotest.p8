@@ -3,6 +3,7 @@ version 8
 __lua__
 cls()
 
+mode = 0 -- 0 => SEND MODE, 1 => RECEIVE MODE
 t = 0
 
 function _draw()
@@ -10,10 +11,11 @@ function _draw()
   -- for i=0,5 do
   val = 0
   if (t % 2 < 1) val = 255
-    poke(0x5f82, val)
+    if (mode == 0) poke(0x5f82, val)
+    if (mode == 1) peek(0x5f82, val)
     circfill(20,64,4,val/11)
     -- circfill(20+i*12,64,4,val/11)
-  end
+  -- end
   t += 0.1
 end
 
