@@ -11,8 +11,10 @@ function _draw()
   val = 0
   if (t % 2 < 1) then val = 255 end
   if (mode == 0) then poke(0x5f82, val) end
-  if (mode == 1) then peek(0x5f82) end
-  circfill(20,64,4,val/11)
+  if (mode == 1) then 
+    readin = peek(0x5f82) 
+    if (readin == 255) then circfill(20,64,4,val/11) end
+  end
   t += 0.1
 end
 
