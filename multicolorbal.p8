@@ -58,6 +58,7 @@ p1=
 g=
 {
 	grav=0.2, -- gravity per frame
+	mode = 0  -- 0=send, 1=receive
 }
 --timer
 t=0
@@ -164,11 +165,32 @@ function _update()
 	end
 end
 
-
-
-
-
 function _draw()
+
+gpiohandle()
+
+function gpiohandle()
+
+  if (mode == 0) then 
+    if (buttonpressed == 1) then   -- kas FIX
+      setgpio(0, 255) -- set high
+    end
+  else
+    gpiolisten = peek("0x5f82") -- listen on first GPIO pin
+    if (gpiolisten == 255) then -- we get signal
+      if (p1.data1 == 0) p1.data1 = 1 -- toggle sprite color
+      if (p1.data1 == 1) p1.data1 = 0 --
+    end
+  end  
+  
+  t += 0.1
+
+end
+
+function setgpio(gpio,val)
+  print("gpio write "..gpio.." = "..val , 0, 10*(gpio+1)) 
+  poke(0x5f82+gpio, val)
+end
 
 updateplayerstate(p1)
  cls() --clear the screen
