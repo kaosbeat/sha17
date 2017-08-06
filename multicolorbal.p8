@@ -182,7 +182,8 @@ function _draw()
 	cls() --clear the screen
 	map(0,0,0,0,128,128) --draw map
 	renderplayer(p1) --draw player
-	print( "time ="..t,1,15)
+	--print( "time ="..t,1,15)
+	debug()
 end
 
 function setgpio(gpio,val)
@@ -224,9 +225,7 @@ function updateplayerstate(player)
 		player.jumpvel= 0
 	end
 
-	--write data to gpio object
- 	--print("playerdata = "..player.data1,1,0 )
-
+	--write data to gpio object	
 	if (player.x < 64) then
 		gpio.p4 = 0
 	elseif (player.x >= 63) then
@@ -234,6 +233,10 @@ function updateplayerstate(player)
 	end	
  end
 
+function debug()
+	print ("p1.data1 = "..p1.data1, 0,0)
+	print ("GPIO.p1 = "..gpio.p1, 0,16)
+end
 
  
 function renderplayer(player)
