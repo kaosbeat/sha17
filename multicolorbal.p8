@@ -253,7 +253,7 @@ function updateplayerstate(player)
 	--write data to gpio object	
 	if (player.x < 64) then
 		gpio.p2 = 0
-	elseif (player.x >= 63) then
+	elseif (player.x > 64) then
 		gpio.p2 = 1
 	end	
 	--write data to gpio object	
