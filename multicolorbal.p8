@@ -42,7 +42,8 @@ p1=
 	--velocity
 	dx=0,
 	dy=0,
-	
+	data1=0,
+   data2=0,
 	--is the player standing on
 	--the ground. used to determine
 	--if they can jump.
@@ -163,9 +164,21 @@ end
 function _draw()
  cls() --clear the screen
  map(0,0,0,0,128,128) --draw map
-	spr(1,p1.x,p1.y) --draw player
+	renderplayer(p1) --draw player
 	print("v1.0 2016 - @matthughson",14,0,1)
 end
+
+
+
+function renderplayer(player)
+ if (player.data1 == 1) then
+   spr(17,player.x,player.y)
+ elseif (player.data1 == 0) then
+  -spr(1,player.x,player.y)
+ end
+
+
+
 __gfx__
 0000000000cccc002244aa99bbbbbbbb010101010000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
 000000000cc77cc02444a999bbbb3bbb101010100000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
