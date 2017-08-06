@@ -59,9 +59,12 @@ g=
 {
 	grav=0.2, -- gravity per frame
 }
+--timer
+t=0
 
 -- called 30 times per second
 function _update()
+   t = t+0.1
 
 	--remember where we started
 	local startx=p1.x
@@ -161,7 +164,13 @@ function _update()
 	end
 end
 
+
+
+
+
 function _draw()
+
+updateplayerstate(p1)
  cls() --clear the screen
  map(0,0,0,0,128,128) --draw map
 	renderplayer(p1) --draw player
@@ -169,12 +178,23 @@ function _draw()
 end
 
 
+function updateplayerstate(player)
+ if (t%8)==0 then 
+ player.data1 = 1
+ else
+  player.data1 =0
+
+ end
+ print("playerdata = "..player.data1,1,0 )
+ end
+
 
 function renderplayer(player)
  if (player.data1 == 1) then
    spr(17,player.x,player.y)
  elseif (player.data1 == 0) then
-  -spr(1,player.x,player.y)
+   spr(1,player.x,player.y)
+ end
  end
 
 
