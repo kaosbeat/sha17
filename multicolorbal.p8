@@ -208,10 +208,23 @@ function gpiohandle()
 	else	
 		setgpio(2,0) -- set low
   	end
-    gpiolisten = peek("0x5f82") -- listen on first GPIO pin
-    if (gpiolisten == 255) then -- we get signal
-      if (p1.data1 == 0) then p1.data1 = 1 end -- toggle sprite color
-      if (p1.data1 == 1) then p1.data1 = 0 end --
+    gpiolisten4 = peek("0x5f85") -- listen on first gpio pin 
+    if (gpiolisten4 == 255)
+      then gpio.p4 = 1 
+      elseif (gpiolisten4 == 0) 
+      then gpio.p4 = 0
+    end
+    gpiolisten5 = peek("0x5f86") -- listen on first gpio pin 
+    if (gpiolisten5 == 255)
+      then gpio.p5 = 1 
+      elseif (gpiolisten5 == 0) 
+      then gpio.p5 = 0
+    end
+ 	gpiolisten6 = peek("0x5f87")
+	if (gpiolisten6 == 255)
+      then gpio.p6 = 1 
+      elseif (gpiolisten6 == 0) 
+      then gpio.p6 = 0
     end
 end
 
@@ -235,7 +248,12 @@ function updateplayerstate(player)
 
 function debug()
 	print ("p1.data1 = "..p1.data1, 0,0)
-	print ("GPIO.p1 = "..gpio.p1, 0,16)
+	print ("gpio.p1 = "..gpio.p1.."WRITE", 0,8)
+   	print ("gpio.p2 = "..gpio.p2, 0,16)
+   	print ("gpio.p3 = "..gpio.p3, 0,24)
+   	print ("gpio.p4 = "..gpio.p4, 0,32)
+   	print ("gpio.p5 = "..gpio.p5, 0,40)
+   	print ("gpio.p6 = "..gpio.p6, 0,48)
 end
 
  
