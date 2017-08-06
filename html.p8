@@ -84,7 +84,7 @@ function _update()
 	t = t+1
 	gpiohandle()
 	updateplayerstate(p1)
-
+	update_msgs() --for the javascriptpico8com
 	--remember where we started
 	local startx=p1.x
 	
@@ -257,6 +257,18 @@ function gpiohandle()
     end
 end
 
+function renderplayer(player)
+	if (player.groundcolor == 1) then
+		spr(17,player.x,player.y)
+	elseif (player.groundcolor  == 2) then
+		spr(1,player.x,player.y)
+	elseif (player.groundcolor  == 3) then
+		spr(33,player.x,player.y)
+	elseif (player.groundcolor  == 4) then
+		spr(49,player.x,player.y)
+	end
+ end
+
 
 
 function updateplayerstate(player)
@@ -305,22 +317,26 @@ function updateplayerstate(player)
 	setjsgpios()	
  end
  
+
  function setjsgpios(player)
 	if p1.type == 1 then
-		poke(0x4301, gpio.p1)
-		poke(0x4302, gpio.p2)
-		poke(0x4303, gpio.p3)
-		peek(0x4304, gpio.p4)
-		peek(0x4305, gpio.p5)
-		peek(0x4306, gpio.p6)
+		--poke(0x4301, gpio.p1)
+		--poke(0x4302, gpio.p2)
+		--poke(0x4303, gpio.p3)
+		--peek(0x4304, gpio.p4)
+		--peek(0x4305, gpio.p5)
+		--peek(0x4306, gpio.p6)
+		send_msg(1,gpio.p1,gpio.p2,gpio.p3,gpio.p4,gpio.p5,gpio.p6)
 	elseif p1.type == 2 then
-		poke(0x4306, gpio.p6)
-		poke(0x4305, gpio.p5)
-		poke(0x4304, gpio.p4)
-		peek(0x4304, gpio.p4)
-		peek(0x4305, gpio.p5)
-		peek(0x4306, gpio.p6)	
+		--poke(0x4306, gpio.p6)
+		--poke(0x4305, gpio.p5)
+		--poke(0x4304, gpio.p4)
+		--peek(0x4303, gpio.p3)
+		--peek(0x4302, gpio.p2)
+		--peek(0x4301, gpio.p1)
+		send_msg(2,gpio.p6,gpio.p5,gpio.p4,gpio.p3,gpio.p2,gpio.p1)
 	end 
+	
 end
 
 
@@ -338,17 +354,102 @@ function debug()
 end
 
  
-function renderplayer(player)
-	if (player.groundcolor == 1) then
-		spr(17,player.x,player.y)
-	elseif (player.groundcolor  == 2) then
-		spr(1,player.x,player.y)
-	elseif (player.groundcolor  == 3) then
-		spr(33,player.x,player.y)
-	elseif (player.groundcolor  == 4) then
-		spr(49,player.x,player.y)
-	end
+
+---javascript commpart
+chars=" !\"#$%&'()*+,-./0123456789:;<=>?@abcdefghijklmnopqrstuvwxyz[\\]^_`abcdefghijklmnopqrstuvwxyz{|}~"
+s2c={} c2s={}
+for i=1,95 do
+	c=i+31
+	s=sub(chars,i,i)
+	c2s[c]=s
+	s2c[s]=c
+end
+
+omsg_queue={} 
+omsg=nil 
+imsg=""
+
+function split_str(str,sep)
+ astr={} index=0
+ for i=1,#str do
+ 	if (sub(str,i,i)==sep) then
+ 	 chunk=sub(str,index,i-1)
+ 	 index=i+1
+ 		add(astr,chunk)
+ 	end
  end
+ chunk=sub(str,index,#str)
+ add(astr,chunk)
+ return astr
+end
+
+function send_msg(msg)
+	add(omsg_queue,msg)
+end
+
+function update_msgs()
+	update_omsgs()
+	update_imsgs()
+end
+
+function update_omsgs()
+	if (peek(0x4300)==1) return
+ 
+	if (omsg==nil and count(omsg_queue)>0) then
+		omsg=omsg_queue[1]
+		del(omsg_queue,omsg)
+	end 
+		
+	if (omsg!=nil) then
+	 poke(0x4300,1)
+		memset(0x4301,0,63)
+		chunk=sub(omsg,0,63)
+		for i=1,#chunk do
+			poke(0x4300+i,s2c[sub(chunk,i,i)])
+		end
+		omsg=sub(omsg,64)
+		if (#omsg==0) then
+			omsg=nil
+			if (#chunk==63) poke(0x4300,2)
+		end
+	end
+end
+
+function update_imsgs()
+	control=peek(0x4300)
+	if (control==1 or control==2) then
+		for i=1,63 do
+			char=peek(0x4300+i)
+			if (char==0) then
+				process_input()
+				imsg=""
+				break
+			end
+			imsg=imsg..c2s[char]
+		end
+		if (control==2) then
+			process_input()
+			imsg=""
+		end
+		poke(0x4300,0)
+	end
+end
+
+function process_input()
+	--process input here
+	print(imsg,0,70)
+	--detect player type 1/2
+	--if type == 1
+		--kijk eerste 3 bits en schrijf naar gpio.p1-p3
+		
+	--if type == 2
+		--kijk eerste 3 bits en schrijf naar gpio.p6-p4
+	if (imsg=="left") x-=10
+	if (imsg=="right") x+=10
+	if (imsg=="up") y-=10
+	if (imsg=="down") y+=10
+end
+
 
 
 
