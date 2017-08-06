@@ -10,16 +10,16 @@ function _draw()
 cls(5)
 print ("time= "..t,0,0)
 val = 0
-if (t % 2 < 1) then val = 255 end
+if (t % 10 < 5) then val = 255 end
  
-for var=1,3,1 do
+for var=0,2,1 do
      setgpio(var, val)
  -- loop code
      -- readandprint(var)
 end
 
  
-for var=4,6,1 do
+for var=3,5,1 do
      -- sethigh(var)
  -- loop code
      readandprint(var)
@@ -35,7 +35,7 @@ end
 
 function readandprint(gpio)
    gpioval = peek("0x5f82"+gpio)
-   print("gpio read "..gpio.."  = "..gpioval, 0, 10*(gpio+1)) 
+   print("gpio read "..gpio.."  = "..gpioval, 0, 10*(gpio+7)) 
 end
 
 
