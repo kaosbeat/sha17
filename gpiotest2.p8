@@ -11,43 +11,33 @@ cls(5)
 print ("time= "..t,0,0)
 val = 0
 if (t % 2 < 1) then val = 255 end
--- for var=1,3,1 do
---      setgpio(var, val)
---  -- loop code
---      -- readandprint(var)
--- end
+ 
+for var=1,3,1 do
+     setgpio(var, val)
+ -- loop code
+     -- readandprint(var)
+end
 
-for var=0,5,1 do
+ 
+for var=4,6,1 do
      -- sethigh(var)
  -- loop code
      readandprint(var)
 end
-
-
- 
-
-
-  
-  val = 0
-  if (t % 2 < 1) then val = 255 end
-  if (mode == 0) then poke(0x5f82, val) end
-  if (mode == 1) then 
-    readin = peek(0x5f82) 
-    if (readin == 255) then circfill(20,64,4,val/11) end
-  end
   t += 0.1
 end
 
 function setgpio(gpio,val)
-    print("gpio write "..gpio, 0, 10*gpio) 
+    print("gpio write "..gpio.." = "..val , 0, 10*(gpio+1)) 
     poke(0x5f82+gpio, val)
  -- 
 end
 
 function readandprint(gpio)
    gpioval = peek("0x5f82"+gpio)
-   print("gpio read "..gpio.."  = "..gpioval, 0, 10*gpio) 
+   print("gpio read "..gpio.."  = "..gpioval, 0, 10*(gpio+1)) 
 end
+
 
 __gfx__
 00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
