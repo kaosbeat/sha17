@@ -32,7 +32,17 @@ __lua__
 --but if it was good enough for
 --miyamoto, its good enough for
 --me!
-			
+
+--gpio
+gpio={
+	p1 = 0,
+	p2 = 0,
+	p3 = 0,
+	p4 = 0,
+	p5 = 0,
+	p6 = 0
+}
+
 --player
 p1=
 {
@@ -65,7 +75,9 @@ t=0
 
 -- called 30 times per second
 function _update()
-   t = t+1
+	t = t+1
+	gpiohandle()
+	updateplayerstate(p1)
 
 	--remember where we started
 	local startx=p1.x
@@ -163,28 +175,14 @@ function _update()
 			p1.dy = 0
 		end
 	end
+
 end
 
 function _draw()
-
-gpiohandle()
-
-function gpiohandle()
-
-  if (mode == 0) then 
-    if (buttonpressed == 1) then   -- kas FIX
-      setgpio(0, 255) -- set high
-    end
-  else
-    gpiolisten = peek("0x5f82") -- listen on first GPIO pin
-    if (gpiolisten == 255) then -- we get signal
-      if (p1.data1 == 0) p1.data1 = 1 -- toggle sprite color
-      if (p1.data1 == 1) p1.data1 = 0 --
-    end
-  end  
-  
-  t += 0.1
-
+	cls() --clear the screen
+	map(0,0,0,0,128,128) --draw map
+	renderplayer(p1) --draw player
+	print( "time ="..t,1,15)
 end
 
 function setgpio(gpio,val)
@@ -193,38 +191,59 @@ function setgpio(gpio,val)
 end
 
 
- cls() --clear the screen
- updateplayerstate(p1)
- map(0,0,0,0,128,128) --draw map
-	renderplayer(p1) --draw player
-	-- print("v1.0 2016 - @matthughson",14,0,1)
- print( "time ="..t,1,15)
+function gpiohandle()
+  	if (gpio.p1 == 1) then 
+      	setgpio(0, 255) -- set high
+	else
+		setgpio(0,0) -- set low
+  	end
+  	if (gpio.p2 == 1) then 
+      	setgpio(1, 255) -- set high
+	else	
+		setgpio(1,0) -- set low
+  	end
+	if (gpio.p3 == 1) then 
+      	setgpio(2, 255) -- set high
+	else	
+		setgpio(2,0) -- set low
+  	end
+    gpiolisten = peek("0x5f82") -- listen on first GPIO pin
+    if (gpiolisten == 255) then -- we get signal
+      if (p1.data1 == 0) then p1.data1 = 1 end -- toggle sprite color
+      if (p1.data1 == 1) then p1.data1 = 0 end --
+    end
 end
 
-
 function updateplayerstate(player)
- if (t%8)==0 then 
- player.data1 = 1
- player.jumpvel = 8
- else
-  player.data1 =0
-  player.jumpvel=3.4
+	--read in properties for player from gpio onject
+	if (gpio.p1 == 0) then 
+		player.data1 = 0
+		player.jumpvel = 8
+	elseif (gpio.p1 == 1 ) then
+		player.data = 1 
+		player.jumpvel= 0
+	end
 
+	--write data to gpio object
+ 	--print("playerdata = "..player.data1,1,0 )
+
+	if (player.x < 64) then
+		gpio.p4 = 0
+	elseif (player.x >= 63) then
+		gpio.p4 = 1
+	end	
  end
- print("playerdata = "..player.data1,1,0 )
-
- if (player.x < 64)
-	
- end
 
 
+ 
 function renderplayer(player)
- if (player.data1 == 1) then
-   spr(17,player.x,player.y)
- elseif (player.data1 == 0) then
-   spr(1,player.x,player.y)
+	if (player.data1 == 1) then
+		spr(17,player.x,player.y)
+	elseif (player.data1 == 0) then
+		spr(1,player.x,player.y)
+	end
  end
- end
+
 
 
 
