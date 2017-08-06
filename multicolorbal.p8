@@ -64,7 +64,7 @@ t=0
 
 -- called 30 times per second
 function _update()
-   t = t+0.1
+   t = t+1
 
 	--remember where we started
 	local startx=p1.x
@@ -170,22 +170,29 @@ end
 
 function _draw()
 
-updateplayerstate(p1)
+
  cls() --clear the screen
+ updateplayerstate(p1)
  map(0,0,0,0,128,128) --draw map
 	renderplayer(p1) --draw player
-	print("v1.0 2016 - @matthughson",14,0,1)
+	-- print("v1.0 2016 - @matthughson",14,0,1)
+ print( "time ="..t,1,15)
 end
 
 
 function updateplayerstate(player)
  if (t%8)==0 then 
  player.data1 = 1
+ player.jumpvel = 8
  else
   player.data1 =0
+  player.jumpvel=3.4
 
  end
  print("playerdata = "..player.data1,1,0 )
+
+ if (player.x < 64)
+	
  end
 
 
