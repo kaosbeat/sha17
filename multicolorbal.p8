@@ -233,15 +233,15 @@ function updateplayerstate(player)
 	--read in properties for player from gpio onject
 	if (gpio.p4 == 0) then 
 		player.data1 = 0
-		player.jumpvel = 8
 	elseif (gpio.p4 == 1 ) then
-		player.data = 1 
-		player.jumpvel= 0
+		player.data1 = 1 
 	end
 	if (gpio.p5 == 0) then 
 		player.data2 = 0
+		player.jumpvel = 0
 	elseif (gpio.p5 == 1 ) then
 		player.data2 = 1 
+		player.jumpvel = 8
 	end
 	if (gpio.p6 == 0) then 
 		player.data3 = 0
@@ -250,17 +250,18 @@ function updateplayerstate(player)
 	end
 
 
-	--write data to gpio object	
-	if (player.x < 64) then
-		gpio.p2 = 0
-	elseif (player.x > 64) then
-		gpio.p2 = 1
-	end	
+
 	--write data to gpio object	
 	if (player.isgrounded) then
 		gpio.p1 = 0
 	else
 		gpio.p1 = 1
+	end	
+	--write data to gpio object	
+	if (player.x < 64) then
+		gpio.p2 = 0
+	elseif (player.x > 64) then
+		gpio.p2 = 1
 	end	
 	--write data to gpio object	
 	if (player.y < 64) then
@@ -271,13 +272,13 @@ function updateplayerstate(player)
  end
 
 function debug()
-	print ("p1.data1 = "..p1.data1, 0,0)
-	print ("gpio.p1 = "..gpio.p1.."WRITE", 0,8)
-   	print ("gpio.p2 = "..gpio.p2, 0,16)
-   	print ("gpio.p3 = "..gpio.p3, 0,24)
-   	print ("gpio.p4 = "..gpio.p4, 0,32)
-   	print ("gpio.p5 = "..gpio.p5, 0,40)
-   	print ("gpio.p6 = "..gpio.p6, 0,48)
+	print ("p1.x = "..p1.x..", p1.y ="..p1.y, 0,0)
+	print ("gpio.p1 = "..gpio.p1, 15,16)
+   	print ("gpio.p2 = "..gpio.p2, 15,24)
+   	print ("gpio.p3 = "..gpio.p3, 15,32)
+   	print ("gpio.p4 jump = "..gpio.p4, 15,40)
+   	print ("gpio.p5 = "..gpio.p5, 15,48)
+   	print ("gpio.p6 = "..gpio.p6, 15,56)
 end
 
  
