@@ -53,7 +53,8 @@ p1=
 	dx=0,
 	dy=0,
 	data1=0,
-   data2=0,
+  	data2=0,
+   	data3=0,
 	--is the player standing on
 	--the ground. used to determine
 	--if they can jump.
@@ -230,19 +231,42 @@ end
 
 function updateplayerstate(player)
 	--read in properties for player from gpio onject
-	if (gpio.p1 == 0) then 
+	if (gpio.p4 == 0) then 
 		player.data1 = 0
 		player.jumpvel = 8
-	elseif (gpio.p1 == 1 ) then
+	elseif (gpio.p4 == 1 ) then
 		player.data = 1 
 		player.jumpvel= 0
 	end
+	if (gpio.p5 == 0) then 
+		player.data2 = 0
+	elseif (gpio.p5 == 1 ) then
+		player.data2 = 1 
+	end
+	if (gpio.p6 == 0) then 
+		player.data3 = 0
+	elseif (gpio.p6 == 1 ) then
+		player.data3 = 1 
+	end
+
 
 	--write data to gpio object	
 	if (player.x < 64) then
-		gpio.p4 = 0
+		gpio.p1 = 0
 	elseif (player.x >= 63) then
-		gpio.p4 = 1
+		gpio.p1 = 1
+	end	
+	--write data to gpio object	
+	if (player.isgrounded) then
+		gpio.p2 = 0
+	else
+		gpio.p2 = 1
+	end	
+	--write data to gpio object	
+	if (player.y < 64) then
+		gpio.p3 = 0
+	elseif (player.y >= 63) then
+		gpio.p3 = 1
 	end	
  end
 
