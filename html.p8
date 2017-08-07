@@ -40,7 +40,8 @@ gpio={
 	p3 = 0,
 	p4 = 0,
 	p5 = 0,
-	p6 = 0
+	p6 = 0,
+	jsgpio = 0
 }
 
 --player
@@ -175,6 +176,10 @@ function _update()
 		if fget(v,2) then p1.groundcolor = 2 end
 		if fget(v,3) then p1.groundcolor = 3 end
 		if fget(v,4) then p1.groundcolor = 4 end
+	else 
+		gpio.p1 = 0
+		gpio.p2 = 0
+		gpio.p3 = 0
 	end
 	
 	--hit ceiling
@@ -197,7 +202,7 @@ function _update()
 	end
 end
 
-function _draw()
+function _draw()	
 	cls() --clear the screen
 	if (p1.type == 0) then
 		drawintro() 
@@ -237,13 +242,13 @@ function gpiohandle()
 	else	
 		setgpio(2,0) -- set low
   	end
-    gpiolisten4 = peek("0x5f85") -- listen on first gpio pin 
+    gpiolisten4 = peek("0x5f85")  
     if (gpiolisten4 == 255)
       then gpio.p4 = 1 
       elseif (gpiolisten4 == 0) 
       then gpio.p4 = 0
     end
-    gpiolisten5 = peek("0x5f86") -- listen on first gpio pin 
+    gpiolisten5 = peek("0x5f86") 
     if (gpiolisten5 == 255)
       then gpio.p5 = 1 
       elseif (gpiolisten5 == 0) 
@@ -258,13 +263,13 @@ function gpiohandle()
 end
 
 function renderplayer(player)
-	if (player.groundcolor == 1) then
-		spr(17,player.x,player.y)
-	elseif (player.groundcolor  == 2) then
+	if (gpio.p4 == 1 and gpio.p5 == 0 and gpio.p6 == 0) then
 		spr(1,player.x,player.y)
-	elseif (player.groundcolor  == 3) then
+	elseif (gpio.p4 == 0 and gpio.p5 == 1 and gpio.p6 == 0 ) then
+		spr(17,player.x,player.y)
+	elseif (gpio.p4 == 0 and gpio.p5 == 0 and gpio.p6 == 1 ) then
 		spr(33,player.x,player.y)
-	elseif (player.groundcolor  == 4) then
+	elseif (gpio.p4 == 0 and gpio.p5 == 0 and gpio.p6 == 0 ) then
 		spr(49,player.x,player.y)
 	end
  end
@@ -351,6 +356,8 @@ function debug()
    	print ("gpio.p5 = "..gpio.p5, 15,48)
    	print ("gpio.p6 = "..gpio.p6, 15,56)
 	print (p1.type, 15,70)
+	print (gpio.jsgpio,15,85)
+
 end
 
  
@@ -437,7 +444,7 @@ end
 
 function process_input()
 	--process input here
-	print(imsg,0,70)
+	gpio.jsgpio = imgs
 	--detect player type 1/2
 	--if type == 1
 		--kijk eerste 3 bits en schrijf naar gpio.p1-p3
