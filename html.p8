@@ -33,6 +33,10 @@ __lua__
 --miyamoto, its good enough for
 --me!
 
+-- set true to enable read/write on real GPIOs (0xf4300 and on)
+-- set false to use the [pico8com] javascript breakout gpio adresses
+cablelink = false
+
 --gpio
 gpio={
 	p1 = 0,
@@ -43,6 +47,8 @@ gpio={
 	p6 = 0,
 	jsgpio = 0
 }
+
+
 
 --player
 p1=
@@ -324,6 +330,7 @@ function updateplayerstate(player)
  
 
  function setjsgpios(player)
+ 	send_msg("bleep")
 	if p1.type == 1 then
 		--poke(0x4301, gpio.p1)
 		--poke(0x4302, gpio.p2)
@@ -400,7 +407,7 @@ function update_msgs()
 end
 
 function update_omsgs()
-	if (peek(0x4300)==1) return
+	if (peek(0x5f80)==1) return
  
 	if (omsg==nil and count(omsg_queue)>0) then
 		omsg=omsg_queue[1]
@@ -408,25 +415,25 @@ function update_omsgs()
 	end 
 		
 	if (omsg!=nil) then
-	 poke(0x4300,1)
-		memset(0x4301,0,63)
+	 poke(0x5f80,1)
+		memset(0x5f81,0,63)
 		chunk=sub(omsg,0,63)
 		for i=1,#chunk do
-			poke(0x4300+i,s2c[sub(chunk,i,i)])
+			poke(0x5f80+i,s2c[sub(chunk,i,i)])
 		end
 		omsg=sub(omsg,64)
 		if (#omsg==0) then
 			omsg=nil
-			if (#chunk==63) poke(0x4300,2)
+			if (#chunk==63) poke(0x5f80,2)
 		end
 	end
 end
 
 function update_imsgs()
-	control=peek(0x4300)
+	control=peek(0x5fc0)
 	if (control==1 or control==2) then
 		for i=1,63 do
-			char=peek(0x4300+i)
+			char=peek(0x5fc0+i)
 			if (char==0) then
 				process_input()
 				imsg=""
@@ -438,9 +445,10 @@ function update_imsgs()
 			process_input()
 			imsg=""
 		end
-		poke(0x4300,0)
+		poke(0x5fc0,0)
 	end
 end
+
 
 function process_input()
 	--process input here
