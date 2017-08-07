@@ -9,12 +9,12 @@ server.on('connection', (connection) =>
 	connection.send('test');
 	connection.on('message', (data) =>
 	{
-		console.log('Client message ' + data + ' received');
+		//console.log('Client message ' + data + ' received');
 		broadcast(data);
   	}); 
   	connection.on('close', (data) =>
 	{
-		console.log('Client disconnected');
+		//console.log('Client disconnected');
   	}); 
 });
 
